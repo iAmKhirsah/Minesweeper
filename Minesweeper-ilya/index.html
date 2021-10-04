@@ -5,10 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="data/style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body onload="init()">
+  <body oncontextmenu="return false;" onload="init()">
+    <div class="button-container">
+      <button onclick="difficulty(4,2)">Easy</button>
+      <button onclick="difficulty(8,12)">Medium</button>
+      <button onclick="difficulty(12,30)">Hard</button>
+    </div>
+    <div class="timer"></div>
     <div class="table"></div>
-    <script src="data/js/main.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
