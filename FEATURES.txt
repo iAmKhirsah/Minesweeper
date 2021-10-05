@@ -61,7 +61,7 @@ Add smiley (feel free to switch icons \ images):                       / DONE
 
 Add support for HINTS
 The user has 3 hints
-When a hint is clicked, it changes its look, example:                  / DONE
+When a hint is clicked, it changes its look, example:                  / DONE PARTIALLY, NOT DISPLAYING 3 HINTS CAUSE I DIDNT DO IT YET
 Now, when a cell (unrevealed) is clicked, the cell and its 
 neighbors are revealed for a second, and the clicked hint 
 disappears.
@@ -77,7 +77,7 @@ the page
 Safe click
 Add a Safe-Click Button:
 The user has 3 Safe-Clicks
-Clicking the Safe-Click button will mark a random covered cell         / NOT DONE
+Clicking the Safe-Click button will mark a random covered cell         / DONE PARTIALLY, NOT DISPLAYING 3 HINTS CAUSE I DIDNT DO IT YET
 (for a few seconds) that is safe to click (does not contain a 
 MINE).
 Present the remaining Safe-Clicks count

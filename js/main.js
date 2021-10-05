@@ -2,9 +2,11 @@
 var gBoard;
 var gTimer;
 var gLives;
+var gHintSafeClick;
 var gPotentialMine;
 var gTimerInterval;
 var gHintFlag = false;
+var gHintFlagCount;
 
 var gLevel = {
   size: 8,
@@ -15,15 +17,20 @@ var gGame = {
   shownCount: 0,
   markedCount: 0,
   secsPassed: 0,
+  isFirstMove: true,
 };
 const FLAG = '🚩';
 const MINE = '💣';
 function init() {
   gTimer = 0;
   gLives = 3;
+  gHintSafeClick = 3;
+  gHintFlagCount = 3;
   gGame.shownCount = 0;
   gPotentialMine = 0;
+  gGame.isFirstMove = true;
   gGame.isOn = false;
+  gHintFlag = false;
   var elSmiley = document.querySelector('.smiley');
   var elLives = document.querySelector('.lives');
   var elTimer = document.querySelector('.timer');
@@ -34,6 +41,7 @@ function init() {
   gBoard = buildBoard();
   generateMines();
   renderBoard(gBoard);
+  showCounts();
 }
 
 function buildBoard() {
@@ -87,6 +95,7 @@ function cellClicked(i, j) {
   if (!checkLegalNums(i, j)) {
     return;
   }
+  if (!gGame.isOn && !gGame.isFirstMove) return;
   if (gBoard[i][j].isShown) return;
   gBoard[i][j].isShown = true;
   gGame.shownCount++;
@@ -95,7 +104,8 @@ function cellClicked(i, j) {
     return;
   }
   var elLives = document.querySelector('.lives');
-  if (!gGame.isOn && gBoard[i][j].isMine) {
+  if (gGame.isFirstMove && gBoard[i][j].isMine) {
+    gGame.isFirstMove = false;
     var emptyCell = getEmptyCells(gBoard);
     console.log('emptyCelli', emptyCell.i, 'emptyCellj', emptyCell.j);
     gBoard[i][j].isMine = false;
@@ -232,10 +242,12 @@ function difficulty(size, bombs) {
 }
 
 function rightClick(ev, i, j) {
-  if (!gGame.isOn) {
+  if (gGame.isFirstMove) {
+    gGame.isFirstMove = false;
     gGame.isOn = true;
     setInterval(timer, 1000);
   }
+  if (!gGame.isOn && !gGame.isFirstMove) return;
   if (gBoard[i][j].isShown && gBoard[i][j].isMarked) {
     gGame.shownCount--;
     console.log('--showncount', gGame.shownCount);
@@ -256,6 +268,7 @@ function rightClick(ev, i, j) {
 
 function handleSmileyVictory() {
   var elSmiley = document.querySelector('.smiley');
+  clearInterval(gTimerInterval);
   elSmiley.innerText = '😎';
   console.log('you won');
   gGame.isOn = false;
@@ -263,6 +276,7 @@ function handleSmileyVictory() {
 
 function handleSmileyDefeat() {
   var elSmiley = document.querySelector('.smiley');
+  clearInterval(gTimerInterval);
   elSmiley.innerText = '🤯';
   console.log('you lost');
   gGame.isOn = false;
@@ -272,8 +286,9 @@ function hint() {
   gHintFlag = true;
   console.log(gHintFlag);
 }
-
+// check functionality with the flag count
 function checkHint(cellI, cellJ) {
+  if (gHintFlagCount === 0) return;
   for (var i = cellI - 1; i <= cellI + 1; i++) {
     for (var j = cellJ - 1; j <= cellJ + 1; j++) {
       if (checkLegalNums(i, j)) {
@@ -283,6 +298,8 @@ function checkHint(cellI, cellJ) {
       }
     }
   }
+  gHintFlagCount--;
+  showCounts();
 }
 
 function hideCell(i, j) {
@@ -299,10 +316,20 @@ function checkLegalNums(i, j) {
 }
 
 function safeClick() {
+  if (gHintSafeClick === 0) return;
   var emptyCell = getEmptyCells(gBoard);
   var i = emptyCell.i;
   var j = emptyCell.j;
   gBoard[i][j].isShown = true;
   setTimeout(hideCell, 1000, i, j);
+  gHintSafeClick--;
+  showCounts();
   renderCell(i, j);
+}
+
+function showCounts() {
+  var elHint = document.querySelector('.hints');
+  var elSafeClick = document.querySelector('.safeclick');
+  elHint.innerHTML = `Remaining hints: ${gHintFlagCount}`;
+  elSafeClick.innerHTML = `Remaining Safe Clicks: ${gHintSafeClick}`;
 }
