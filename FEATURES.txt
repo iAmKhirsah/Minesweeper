@@ -1,0 +1,105 @@
+ Show a timer that starts on first click (right / left) and stops  / DONE
+when game is over.  
+
+
+Left click reveals the cell’s content.                             / DONE
+
+
+ Right click flags/unflags a suspected cell (you cannot reveal a   / DONE
+flagged cell). 
+
+
+ Game ends when:                                                   / ITS FUCKED AS SHIT
+o LOSE: when clicking a mine, all mines should be revealed
+o WIN: all the mines are flagged, and all the other cells are 
+shown.   
+
+
+
+
+ Support 3 levels of the game                                      / DONE
+o Beginner (4*4 with 2 MINES)
+o Medium (8 * 8 with 12 MINES) 
+o Expert (12 * 12 with 30 MINES)
+
+
+
+ If you have the time, make your Minesweeper look great.  NOT DONE
+
+
+ Expanding: When left clicking on cells there are 3 possible        /
+cases we want to address:                                           /
+o MINE – reveal the mine clicked                                    /
+o Cell with neighbors – reveal the cell alone                       /
+o Cell without neighbors – expand it and its 1st degree             /   DONE COMPLETELY
+neighbors                                                           /
+Expanding Bonus: (only if time permits) Expand like in the real     /
+game (“Full expand”).                                               /    
+
+
+
+First click is never a Mine
+Make sure the first clicked cell is never a mine (like in the real   / DONE
+game) 
+
+
+Add support for “LIVES” -
+The user has 3 LIVES:
+When a MINE is clicked, there is an indication to the user that     / DONE
+he clicked a mine. The LIVES counter decrease. The user can 
+continue playing.
+
+
+The Smiley
+Add smiley (feel free to switch icons \ images):                       / DONE
+● Normal 😃
+● Sad & Dead – LOSE 🤯 (stepped on a mine) 
+● Sunglasses – WIN 😎
+● Clicking the smiley should reset the game
+
+
+
+Add support for HINTS
+The user has 3 hints
+When a hint is clicked, it changes its look, example:                  / DONE
+Now, when a cell (unrevealed) is clicked, the cell and its 
+neighbors are revealed for a second, and the clicked hint 
+disappears.
+
+
+
+
+Best Score
+Keep the best score in local storage (per level) and show it on        /  NOT DONE
+the page
+
+
+Safe click
+Add a Safe-Click Button:
+The user has 3 Safe-Clicks
+Clicking the Safe-Click button will mark a random covered cell         / NOT DONE
+(for a few seconds) that is safe to click (does not contain a 
+MINE).
+Present the remaining Safe-Clicks count
+
+
+
+Manually positioned mines
+Create a “manually create” mode in which user first positions           / NOT DONE
+the mines (by clicking cells) and then plays.
+
+
+
+Undo
+Add an “UNDO” button, each click on that button takes the              / NOT DONE
+game back by one step (can go all the way back to game start).
+
+
+
+
+7 BOOM!
+Add an “7 BOOM!” button, clicking the button restarts the 
+game and locate the MINES according to the “7 BOOM” 
+principles (each cell-index that contains “7” or a multiplication     / NOT DONE
+of “7”). Note that the cell-index shall be a continuous number 
+(i.e. in a 8*8 Matrix is shall be between 0 to 63).
