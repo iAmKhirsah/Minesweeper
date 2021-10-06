@@ -1,0 +1,1 @@
+currently theres a bug that is caused by me placing the bomb in a different place and not doing mines around count again which fucks it all to hell

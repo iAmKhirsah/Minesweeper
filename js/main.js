@@ -16,7 +16,6 @@ var gGame = {
   isOn: false,
   shownCount: 0,
   markedCount: 0,
-  secsPassed: 0,
   isFirstMove: true,
 };
 const FLAG = '🚩';
@@ -99,24 +98,22 @@ function cellClicked(i, j) {
   }
   if (!gGame.isOn && !gGame.isFirstMove) return;
   if (gBoard[i][j].isShown) return;
-  gBoard[i][j].isShown = true;
-  gGame.shownCount++;
-  handleColor(i, j);
   if (gHintFlag) {
     checkHint(i, j);
     return;
   }
+  gBoard[i][j].isShown = true;
+  gGame.shownCount++;
+  handleColor(i, j);
   if (gGame.isFirstMove && gBoard[i][j].isMine) {
     gGame.isFirstMove = false;
     var emptyCell = getEmptyCells(gBoard);
-
     gBoard[i][j].isMine = false;
     gBoard[emptyCell.i][emptyCell.j].isMine = true;
   }
 
   if (!gGame.isOn) {
     gGame.isOn = true;
-    // setMinesNegsCount(gBoard, i, j);
     gTimerInterval = setInterval(timer, 1000);
   }
   if (gBoard[i][j].isMine) {
@@ -131,7 +128,7 @@ function cellClicked(i, j) {
     }
   } else if (gBoard[i][j].minesAroundCount === 0) {
     expandShown(i, j);
-    renderCell(i, j, 0);
+    renderCell(i, j);
   } else if (!gBoard[i][j].isMine) {
     renderCell(i, j, gBoard[i][j].minesAroundCount);
   }
@@ -169,7 +166,7 @@ function checkGameOverByFlags(i, j) {
   }
   if (
     gPotentialMine === gLevel.mines &&
-    gGame.shownCount === gLevel.size * gLevel.size
+    gGame.shownCount === gLevel.size * gLevel.size - gGame.markedCount
   ) {
     handleSmileyVictory();
   }
@@ -202,7 +199,7 @@ function getEmptyCells(board) {
   var emptyCells = [];
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board.length; j++) {
-      if (!board[i][j].isMine) {
+      if (!board[i][j].isMine && !board[i][j].isShown) {
         emptyCells.push({ i, j });
       }
     }
@@ -277,7 +274,6 @@ function handleSmileyDefeat() {
   var elSmiley = document.querySelector('.smiley');
   clearInterval(gTimerInterval);
   elSmiley.innerText = '🤯';
-
   gGame.isOn = false;
 }
 
@@ -289,9 +285,14 @@ function checkHint(cellI, cellJ) {
   for (var i = cellI - 1; i <= cellI + 1; i++) {
     for (var j = cellJ - 1; j <= cellJ + 1; j++) {
       if (checkLegalNums(i, j)) {
-        gBoard[i][j].isShown = true;
-        setTimeout(hideCell, 1000, i, j);
-        renderCell(i, j);
+        if (gBoard[i][j].isShown) {
+          renderCell(i, j);
+        } else {
+          gBoard[i][j].isShown = true;
+          setTimeout(hideCell, 1000, i, j);
+          renderCell(i, j);
+          handleColor(i, j);
+        }
       }
     }
   }
@@ -302,6 +303,7 @@ function checkHint(cellI, cellJ) {
 function hideCell(i, j) {
   var elCell = document.querySelector(`.cell${i}-${j}`);
   elCell.classList.remove('shown-safe-click');
+  elCell.classList.remove('is-shown');
   gBoard[i][j].isShown = false;
   gHintFlag = false;
   renderCell(i, j, ' ');
@@ -346,24 +348,14 @@ function showCounts() {
   elSafeClick.innerHTML = `Remaining Safe Clicks: ${gHintSafeClick}`;
 }
 
-
-// try to implement a for loop here?
 function handleColor(i, j) {
   var elCell = document.querySelector(`.cell${i}-${j}`);
-
-  if (gBoard[i][j].minesAroundCount === 1) elCell.classList.add('num-color1');
-  else if (gBoard[i][j].minesAroundCount === 2)
-    elCell.classList.add('num-color2');
-  else if (gBoard[i][j].minesAroundCount === 3)
-    elCell.classList.add('num-color3');
-  else if (gBoard[i][j].minesAroundCount === 4)
-    elCell.classList.add('num-color4');
-  else if (gBoard[i][j].minesAroundCount === 5)
-    elCell.classList.add('num-color5');
-  else if (gBoard[i][j].minesAroundCount === 6)
-    elCell.classList.add('num-color6');
-  else if (gBoard[i][j].minesAroundCount === 7)
-    elCell.classList.add('num-color7');
-  else if (gBoard[i][j].minesAroundCount === 8)
-    elCell.classList.add('num-color8');
+  if (gBoard[i][j].isShown) {
+    elCell.classList.add('is-shown');
+  }
+  for (var f = 0; f < 8; f++) {
+    if (gBoard[i][j].minesAroundCount === f) {
+      elCell.classList.add(`num-color${f}`);
+    }
+  }
 }
