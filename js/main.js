@@ -21,6 +21,9 @@ var gGame = {
 };
 const FLAG = '🚩';
 const MINE = '💣';
+const HEART = '❤';
+const HINT = '💡';
+const EXPLOSION = '💥';
 function init() {
   gTimer = 0;
   gLives = 3;
@@ -32,11 +35,10 @@ function init() {
   gGame.isOn = false;
   gHintFlag = false;
   var elSmiley = document.querySelector('.smiley');
-  var elLives = document.querySelector('.lives');
   var elTimer = document.querySelector('.timer');
   elSmiley.innerText = '😃';
   elTimer.innerText = `Timer: ${gTimer}`;
-  elLives.innerHTML = `Lives: ${gLives}`;
+  showCounts();
   clearInterval(gTimerInterval);
   gBoard = buildBoard();
   generateMines();
@@ -99,15 +101,15 @@ function cellClicked(i, j) {
   if (gBoard[i][j].isShown) return;
   gBoard[i][j].isShown = true;
   gGame.shownCount++;
+  handleColor(i, j);
   if (gHintFlag) {
     checkHint(i, j);
     return;
   }
-  var elLives = document.querySelector('.lives');
   if (gGame.isFirstMove && gBoard[i][j].isMine) {
     gGame.isFirstMove = false;
     var emptyCell = getEmptyCells(gBoard);
-    console.log('emptyCelli', emptyCell.i, 'emptyCellj', emptyCell.j);
+
     gBoard[i][j].isMine = false;
     gBoard[emptyCell.i][emptyCell.j].isMine = true;
   }
@@ -119,11 +121,13 @@ function cellClicked(i, j) {
   }
   if (gBoard[i][j].isMine) {
     gLives--;
+    showCounts();
     gPotentialMine++;
-    elLives.innerHTML = `Lives: ${gLives}`;
-    renderCell(i, j, MINE);
+
+    renderCell(i, j, EXPLOSION);
     if (gLives === 0) {
       checkGameOverByMines();
+      showCounts();
     }
   } else if (gBoard[i][j].minesAroundCount === 0) {
     expandShown(i, j);
@@ -144,9 +148,13 @@ function checkGameOverByMines() {
   for (var i = 0; i < gBoard.length; i++) {
     for (var j = 0; j < gBoard.length; j++) {
       if (gBoard[i][j].isMine) {
-        gBoard[i][j].isShown = true;
-        renderCell(i, j, MINE);
-        handleSmileyDefeat();
+        if (gBoard[i][j].isMine && gBoard[i][j].isShown) {
+          renderCell(i, j, EXPLOSION);
+        } else {
+          gBoard[i][j].isShown = true;
+          renderCell(i, j, MINE);
+          handleSmileyDefeat();
+        }
       }
     }
   }
@@ -155,13 +163,9 @@ function checkGameOverByMines() {
 function checkGameOverByFlags(i, j) {
   if (gBoard[i][j].isMine && gBoard[i][j].isMarked) {
     gPotentialMine++;
-    console.log(gPotentialMine);
-    console.log(gLevel.mines);
   }
   if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) {
     gPotentialMine--;
-    console.log('IF IS NOT MARKED', gPotentialMine);
-    console.log('IF IS NOT MARKED', gLevel.mines);
   }
   if (
     gPotentialMine === gLevel.mines &&
@@ -169,8 +173,6 @@ function checkGameOverByFlags(i, j) {
   ) {
     handleSmileyVictory();
   }
-  console.log('shownCount', gGame.shownCount);
-  console.log('gLevel.size', gLevel.size * gLevel.size);
 }
 
 function expandShown(i, j) {
@@ -191,7 +193,6 @@ function generateMines() {
     if (gBoard[randomRow][randomCol].isMine) {
       continue;
     }
-    console.log(i);
     i++;
     gBoard[randomRow][randomCol].isMine = true;
   }
@@ -217,7 +218,7 @@ function getRandomInt(min, max) {
 }
 
 function renderCell(i, j, item = -1) {
-  if ((item = -1)) {
+  if (item === -1) {
     if (!gBoard[i][j].isShown) {
       item = ' ';
     } else if (gBoard[i][j].isMarked) {
@@ -250,7 +251,6 @@ function rightClick(ev, i, j) {
   if (!gGame.isOn && !gGame.isFirstMove) return;
   if (gBoard[i][j].isShown && gBoard[i][j].isMarked) {
     gGame.shownCount--;
-    console.log('--showncount', gGame.shownCount);
     hideCell(i, j);
     gBoard[i][j].isMarked = false;
     return;
@@ -270,7 +270,6 @@ function handleSmileyVictory() {
   var elSmiley = document.querySelector('.smiley');
   clearInterval(gTimerInterval);
   elSmiley.innerText = '😎';
-  console.log('you won');
   gGame.isOn = false;
 }
 
@@ -278,15 +277,13 @@ function handleSmileyDefeat() {
   var elSmiley = document.querySelector('.smiley');
   clearInterval(gTimerInterval);
   elSmiley.innerText = '🤯';
-  console.log('you lost');
+
   gGame.isOn = false;
 }
 
 function hint() {
   gHintFlag = true;
-  console.log(gHintFlag);
 }
-// check functionality with the flag count
 function checkHint(cellI, cellJ) {
   if (gHintFlagCount === 0) return;
   for (var i = cellI - 1; i <= cellI + 1; i++) {
@@ -303,9 +300,10 @@ function checkHint(cellI, cellJ) {
 }
 
 function hideCell(i, j) {
+  var elCell = document.querySelector(`.cell${i}-${j}`);
+  elCell.classList.remove('shown-safe-click');
   gBoard[i][j].isShown = false;
   gHintFlag = false;
-  console.log('hello');
   renderCell(i, j, ' ');
 }
 
@@ -320,6 +318,8 @@ function safeClick() {
   var emptyCell = getEmptyCells(gBoard);
   var i = emptyCell.i;
   var j = emptyCell.j;
+  var elCell = document.querySelector(`.cell${i}-${j}`);
+  elCell.classList.add('shown-safe-click');
   gBoard[i][j].isShown = true;
   setTimeout(hideCell, 1000, i, j);
   gHintSafeClick--;
@@ -329,7 +329,41 @@ function safeClick() {
 
 function showCounts() {
   var elHint = document.querySelector('.hints');
+  var hintsValue = ' ';
   var elSafeClick = document.querySelector('.safeclick');
-  elHint.innerHTML = `Remaining hints: ${gHintFlagCount}`;
+  var elLives = document.querySelector('.lives');
+  var lives = ' ';
+  if (gHintFlagCount === 0) hintsValue = 'No hints left!';
+  for (var i = 0; i < gHintFlagCount; i++) {
+    hintsValue += HINT;
+  }
+  if (gLives === 0) lives = 'You lost!';
+  for (var i = 0; i < gLives; i++) {
+    lives += HEART;
+  }
+  elLives.innerHTML = `${lives}`;
+  elHint.innerHTML = `Remaining hints: ${hintsValue}`;
   elSafeClick.innerHTML = `Remaining Safe Clicks: ${gHintSafeClick}`;
+}
+
+
+// try to implement a for loop here?
+function handleColor(i, j) {
+  var elCell = document.querySelector(`.cell${i}-${j}`);
+
+  if (gBoard[i][j].minesAroundCount === 1) elCell.classList.add('num-color1');
+  else if (gBoard[i][j].minesAroundCount === 2)
+    elCell.classList.add('num-color2');
+  else if (gBoard[i][j].minesAroundCount === 3)
+    elCell.classList.add('num-color3');
+  else if (gBoard[i][j].minesAroundCount === 4)
+    elCell.classList.add('num-color4');
+  else if (gBoard[i][j].minesAroundCount === 5)
+    elCell.classList.add('num-color5');
+  else if (gBoard[i][j].minesAroundCount === 6)
+    elCell.classList.add('num-color6');
+  else if (gBoard[i][j].minesAroundCount === 7)
+    elCell.classList.add('num-color7');
+  else if (gBoard[i][j].minesAroundCount === 8)
+    elCell.classList.add('num-color8');
 }

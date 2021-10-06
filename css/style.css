@@ -1,3 +1,12 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
 table,
 td {
   border: 2px solid gray;
@@ -5,16 +14,16 @@ td {
 }
 
 td {
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
 }
 
 .smiley {
   border: 2px solid gray;
   text-align: center;
-  width: 30px;
-  height: 30px;
-  margin-left: 117px;
+  width: 35px;
+  height: 35px;
+  margin: 10px;
 }
 
 .feet {
@@ -30,6 +39,65 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-sizing: border-box;
   position: center;
+  background-image: url('../img/background.jpg');
+  background-size: cover;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.button-container {
+  padding: 10px 5px 10px 15px;
+}
+
+.lives {
+  margin-bottom: 5px;
+}
+
+.timer {
+  margin-bottom: 5px;
+}
+.hints {
+  margin-bottom: 5px;
+}
+.safeclick {
+  margin-bottom: 5px;
+}
+
+.shown-safe-click {
+  background-color: goldenrod;
+}
+
+.safe-cell {
+  animation: blinker 1s linear infinite;
+}
+
+.num-color1 {
+  color: blue;
+}
+.num-color2 {
+  color: green;
+}
+
+.num-color3 {
+  color: red;
+}
+.num-color4 {
+  color: darkblue;
+}
+.num-color5 {
+  color: rgb(61, 20, 20);
+}
+.num-color6 {
+  color: turquoise;
+}
+.num-color7 {
+  color: black;
+}
+
+.num-color8 {
+  color: gray;
 }

@@ -4,17 +4,21 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Ilya's Minesweeper!</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body oncontextmenu="return false;" onload="init()">
-    <div class="main">
+    <header>
+<h1>Minesweeper!</h1>
+      
       <div class="button-container">
         <button onclick="difficulty(4,2)">Easy</button>
         <button onclick="difficulty(8,12)">Medium</button>
         <button onclick="difficulty(12,30)">Hard</button>
         <button class="hint" onclick="hint()">Hint</button>
         <button class="safe" onclick="safeClick()">Safe Click!</button>
+    </header>
+   
       </div>
       <div class="lives"></div>
       <div class="timer"></div>
@@ -22,7 +26,6 @@
       <div class="safeclick"></div>
       <div class="smiley" onclick="init()">😃</div>
       <div class="table"></div>
-    </div>
     <footer class="feet">By Ilya Shershniov</footer>
     <script src="js/main.js"></script>
   </body>
